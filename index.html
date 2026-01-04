@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Callories - Controle de Déficit Calórico</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <h1>🔥 Callories</h1>
+            <div class="header-actions">
+                <button id="dark-mode-btn" class="btn btn-icon-small" title="Modo Escuro">🌙</button>
+                <button id="export-btn" class="btn btn-icon-small" title="Exportar Dados">📥</button>
+                <button id="import-btn" class="btn btn-icon-small" title="Importar Dados">📤</button>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="dashboard-grid">
+            <!-- Coluna Esquerda: Resumo e Adicionar -->
+            <div class="left-column">
+                <!-- Resumo do Dia -->
+                <div class="summary-section">
+                    <h2>Resumo do Dia</h2>
+                    <div class="summary-cards">
+                        <div class="summary-card gastas">
+                            <h3>Calorias Gastas</h3>
+                            <p class="amount" id="total-gastas">0</p>
+                        </div>
+                        <div class="summary-card ganhas">
+                            <h3>Calorias Ganhas</h3>
+                            <p class="amount" id="total-ganhas">0</p>
+                        </div>
+                        <div class="summary-card saldo">
+                            <h3>Saldo do Dia</h3>
+                            <p class="amount" id="saldo-dia">0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Adicionar Calorias -->
+                <div class="add-calories-section">
+                    <h2>Adicionar Calorias</h2>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="calorie-type">Tipo</label>
+                            <select id="calorie-type">
+                                <option value="gastas">Calorias Gastas</option>
+                                <option value="ganhas">Calorias Ganhas</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="calorie-amount">Quantidade</label>
+                            <input type="number" id="calorie-amount" placeholder="Ex: 500" min="0">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label for="calorie-description">Descrição</label>
+                        <input type="text" id="calorie-description" placeholder="Ex: Jogando vôlei">
+                    </div>
+                    <button id="add-calorie-btn" class="btn btn-primary">Adicionar</button>
+                </div>
+
+                <!-- Lista de Entradas do Dia -->
+                <div class="entries-section">
+                    <h2>Entradas de Hoje</h2>
+                    <div id="entries-list" class="entries-list">
+                        <p class="empty-message">Nenhuma entrada registrada hoje</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Coluna Direita: Calendário -->
+            <div class="right-column">
+                <div class="calendar-section">
+                    <div class="calendar-header">
+                        <h2>Calendário</h2>
+                        <div class="calendar-controls">
+                            <button id="prev-month" class="btn btn-icon">‹</button>
+                            <h3 id="current-month-year"></h3>
+                            <button id="next-month" class="btn btn-icon">›</button>
+                        </div>
+                    </div>
+                    <div id="calendar" class="calendar"></div>
+                    <div class="legend">
+                        <div class="legend-item">
+                            <span class="legend-dot good"></span>
+                            <span>Déficit</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot bad"></span>
+                            <span>Superávit</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot neutral"></span>
+                            <span>Equilibrado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detalhes do Dia Selecionado (Modal) -->
+    <div class="modal-overlay" id="day-details" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="day-details-title"></h2>
+                <button id="close-details" class="btn-close">×</button>
+            </div>
+            <div id="day-details-content" class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Modal de Editar Entrada -->
+    <div class="modal-overlay" id="edit-entry-modal" style="display: none;">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Editar Entrada</h2>
+                <button id="close-edit-modal" class="btn-close">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label for="edit-calorie-type">Tipo:</label>
+                    <select id="edit-calorie-type">
+                        <option value="gastas">Calorias Gastas</option>
+                        <option value="ganhas">Calorias Ganhas</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="edit-calorie-amount">Quantidade:</label>
+                    <input type="number" id="edit-calorie-amount" placeholder="Ex: 500" min="0">
+                </div>
+                <div class="input-group">
+                    <label for="edit-calorie-description">Descrição:</label>
+                    <input type="text" id="edit-calorie-description" placeholder="Ex: Jogando vôlei">
+                </div>
+                <div class="modal-actions">
+                    <button id="save-edit-btn" class="btn btn-primary">Salvar</button>
+                    <button id="cancel-edit-btn" class="btn btn-secondary">Cancelar</button>
+                </div>
+                <input type="hidden" id="edit-entry-date">
+                <input type="hidden" id="edit-entry-index">
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
